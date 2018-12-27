@@ -1,6 +1,6 @@
 import {updateMetaParams} from '../meta';
 
-export enum SourceArgument {
+export enum PropSource {
   Body = 'body',
   Params = 'params',
   Query = 'query',
@@ -11,23 +11,22 @@ export enum SourceArgument {
   Context = 'ctx',
 }
 
-function decorateParams(sourceArgument) {
+function decorateParams(propSource: PropSource) {
 
-  return function (argumentName?) {
+  return function (propName?: string) {
     return function (target: any, methodName: string, index: number) {
-      const targetMethod = target[methodName];
 
-      updateMetaParams(targetMethod, methodName, index, {sourceArgument, argumentName})
+      updateMetaParams(target[methodName], methodName, index, {propSource, propName})
     }
   }
 }
 
-export const Params = decorateParams(SourceArgument.Params);
-export const Body = decorateParams(SourceArgument.Body);
-export const Query = decorateParams(SourceArgument.Query);
-export const State = decorateParams(SourceArgument.State);
+export const Params = decorateParams(PropSource.Params);
+export const Body = decorateParams(PropSource.Body);
+export const Query = decorateParams(PropSource.Query);
+export const State = decorateParams(PropSource.State);
 
-export const Context = decorateParams(SourceArgument.Context);
-export const Request = decorateParams(SourceArgument.Request);
-export const Response = decorateParams(SourceArgument.Response);
-export const Next = decorateParams(SourceArgument.Next);
+export const Context = decorateParams(PropSource.Context);
+export const Request = decorateParams(PropSource.Request);
+export const Response = decorateParams(PropSource.Response);
+export const Next = decorateParams(PropSource.Next);

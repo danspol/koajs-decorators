@@ -1,22 +1,27 @@
-import {MiddlewareDecorator, updateMetaMiddleware} from '../meta';
+import {updateMetaMiddleware} from '../meta';
+
+ async function Anonymous(ctx: any, next:  () => {}) {
+   await next()
+ }
 
 function decorateMiddleware() {
 
-  return function (...middlewares: MiddlewareDecorator[]) {
-    return function (target, methodName: string) {
-      const targetMethod = target[methodName];
+  return function (...middlewares: Function[]) {
+    return function (target: any, methodName: string) {
       let newValues = {};
 
       if (middlewares && middlewares.length > 0) {
 
-        newValues = middlewares.reduce((result, middleware) => {
-          return middleware ? {...result, [middleware.name]: middleware} : result;
+        newValues = middlewares.reduce((result, middleware: Function) => {
+          const {name} = middleware || Anonymous;
+
+          return name ? {...result, [name]: middleware} : result;
         }, {});
       } else {
-        newValues = {[methodName]: targetMethod};
+        newValues = {[methodName]: target[methodName]};
       }
 
-      updateMetaMiddleware(targetMethod, newValues);
+      updateMetaMiddleware(target[methodName], newValues);
     }
   }
 }

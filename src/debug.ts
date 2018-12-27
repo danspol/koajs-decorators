@@ -1,15 +1,22 @@
 import {keys, map} from "lodash";
-import {TargetArguments} from './meta';
+import {FunArgs, MetaControllerMethods} from './meta';
 
-export const decoratorLogs = (name, log = false) => {
+type GroupRoute = {
+  method: string;
+  path: string;
+  methodName: string;
+  params: string;
+}
 
-  let data = [];
+export const decoratorLogs = (name: string, log = false) => {
+
+  let data: any = [];
 
   return {
-    log: ({route, controller, params, middleware}) => {
+    log: ({route, controller, params, middleware}: MetaControllerMethods) => {
 
       let groupMiddleware = [];
-      let groupRoute = {};
+      let groupRoute: GroupRoute;
 
       if (controller) {
         data.push(controller);
@@ -29,7 +36,7 @@ export const decoratorLogs = (name, log = false) => {
       }
 
       if (route) {
-        const {method, target, path, methodName} = route;
+        const {method, path, methodName} = route;
         const newParams = params[methodName];
 
         groupRoute = {method, path, methodName, params: debugArguments(newParams)};
@@ -57,8 +64,10 @@ export const decoratorLogs = (name, log = false) => {
   }
 };
 
-export const debugArguments = (newParams: TargetArguments[]) => {
+export const debugArguments = (newParams: FunArgs[]) => {
+
   return newParams && newParams.map((arg) => {
-    return arg.argumentName ? `${arg.argumentName}: ${arg.sourceArgument}` : arg.sourceArgument;
+
+    return arg.propName ? `${arg.propName}: ${arg.propSource}` : arg.propSource;
   }).toString() || `ctx, next`;
 };

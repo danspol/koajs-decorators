@@ -7,7 +7,7 @@ type ControllerConfiguration = {
 
 export const Controller = (options: ControllerConfiguration) => {
 
-  return function (target) {
+  return function (target: any) {
     const meta = getMetaController(target);
 
     if (options.prefix) {

@@ -1,14 +1,14 @@
 import {map, uniq} from 'lodash';
-import {Methods} from './decorators';
+import {Methods} from "./decorators/route";
 
 export const nameMetaController = '__koajs_decorators_controller__';
 export const nameMetaMiddleware = '__koajs_decorators_middleware__';
 export const nameMetaParams = '__koajs_decorators_params__';
 export const nameMetaRoute = '__koajs_decorators_route__';
 
-const getAllMethods = (target) => {
-  let propertyNames = [];
-  let extendClassMethods = [];
+const getAllMethods = (target: Function): string[] => {
+  let propertyNames: string[] = [];
+  let extendClassMethods: string[] = [];
   const propOf = Object.getPrototypeOf(target);
 
   if (target && propOf.constructor.name !== "Object") {
@@ -22,14 +22,10 @@ const getAllMethods = (target) => {
   return [...extendClassMethods, ...propertyNames]
 };
 
-export type TargetArguments = {
-  sourceArgument: string,
-  argumentName: string
+export type FunArgs = {
+  propName: string,
+  propSource: string
 }
-
-export type MiddlewareDecorator = (ctx?, next?) => {};
-
-export type EmptyFunction = (...args) => {};
 
 export type MetaController = {
   prefix: string;
@@ -39,15 +35,15 @@ export type MetaRoute = {
   path: string,
   method: Methods,
   methodName: string,
-  target: EmptyFunction,
+  target: Function,
 }
 
 export type MetaMiddleware = {
-  [key: string]: MiddlewareDecorator
+  [key: string]: Function
 }
 
 export type MetaParams = {
-  [key: string]: TargetArguments[];
+  [key: string]: FunArgs[];
 }
 
 export type MetaControllerMethods = {
@@ -57,7 +53,7 @@ export type MetaControllerMethods = {
   route?: MetaRoute
 }
 
-export function getMetaRoute(target): MetaRoute {
+export function getMetaRoute(target: any): MetaRoute {
 
   if (!target[nameMetaRoute]) {
 
@@ -72,14 +68,14 @@ export function getMetaRoute(target): MetaRoute {
   return target[nameMetaRoute];
 }
 
-export function updateMetaRoute(route: MetaRoute, path, method, target, methodName) {
+export function updateMetaRoute(route: MetaRoute, path: string, method: Methods, target: Function, methodName: string) {
   route.path = path;
   route.method = method;
   route.methodName = methodName;
   route.target = target;
 }
 
-export function getMetaMiddleware(target): MetaMiddleware {
+export function getMetaMiddleware(target: any): MetaMiddleware {
 
   if (!target[nameMetaMiddleware]) {
 
@@ -89,7 +85,7 @@ export function getMetaMiddleware(target): MetaMiddleware {
   return target[nameMetaMiddleware];
 }
 
-export function updateMetaMiddleware(target, values) {
+export function updateMetaMiddleware(target: any, values: { [key: string]: Function }) {
   if (!target[nameMetaMiddleware]) {
 
     target[nameMetaMiddleware] = {};
@@ -98,7 +94,7 @@ export function updateMetaMiddleware(target, values) {
   target[nameMetaMiddleware] = values;
 }
 
-export function getMetaParams(target): MetaParams {
+export function getMetaParams(target: any): MetaParams {
 
   if (!target[nameMetaParams]) {
 
@@ -108,7 +104,7 @@ export function getMetaParams(target): MetaParams {
   return target[nameMetaParams];
 }
 
-export function updateMetaParams(targetMethod, methodName, index, values) {
+export function updateMetaParams(targetMethod: any, methodName: string, index: number, values: FunArgs) {
   const meta = getMetaParams(targetMethod);
 
   if (!meta[methodName]) {
@@ -118,7 +114,7 @@ export function updateMetaParams(targetMethod, methodName, index, values) {
   meta[methodName][index] = values;
 }
 
-export function getMetaController(target): MetaController {
+export function getMetaController(target: any): MetaController {
   if (!target[nameMetaController]) {
 
     target[nameMetaController] = {}
@@ -127,7 +123,7 @@ export function getMetaController(target): MetaController {
   return target[nameMetaController];
 }
 
-export function getMetaControllerMethod(target): MetaControllerMethods[] {
+export function getMetaControllerMethod(target: any): MetaControllerMethods[] {
   const propertyNames = uniq(getAllMethods(target));
 
   return map(propertyNames, (nameMethod) => {

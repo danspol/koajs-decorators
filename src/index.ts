@@ -1,30 +1,32 @@
 import * as Router from 'koa-router';
 import {keys, map} from 'lodash';
-import {getMetaControllerMethod} from './meta';
-import {decoratorLogs} from './debug';
-import {SourceArgument} from './decorators';
+import {FunArgs, getMetaControllerMethod, MetaRoute} from './meta';
+import {decoratorLogs} from "./debug";
+import {PropSource} from "./decorators/params";
 
-const handlerFactory = (targetFunction, targetParams) => {
+const prepareParams = (ctx: Router.IRouterContext, next: () => Promise<any>, args: any): any[] => {
+  const defaultParams = [ctx, next];
 
-  return async (ctx, next) => {
+  if (args) {
 
-    const args = targetParams ? targetParams.map(({sourceArgument, argumentName}) => {
-      if (sourceArgument === SourceArgument.Next) {
-        return next;
-      } else if (sourceArgument === SourceArgument.Context) {
-        return ctx;
-      } else {
-        return argumentName ?
-          ctx[sourceArgument][argumentName] :
-          ctx[sourceArgument];
+    return args.map(({propSource, propName}: FunArgs) => {
+      switch (propSource) {
+        case PropSource.Next:
+          return next;
+        case PropSource.Context:
+          return ctx;
+        default:
+          return propName ?
+            ctx[propSource][propName] :
+            ctx[propSource];
       }
-    }) : [ctx, next];
-
-    await targetFunction(...args);
+    });
   }
+
+  return defaultParams;
 };
 
-export const UseDecorator = (target, debug = false) => {
+export const UseDecorator = (target: any, debug = false) => {
   const instanceClass = new target();
   const metaDescription = getMetaControllerMethod(instanceClass);
   const router = new Router();
@@ -41,19 +43,25 @@ export const UseDecorator = (target, debug = false) => {
     if (middleware) {
       const middlewareKeys = keys(middleware);
 
-      const listMiddleware = map(middlewareKeys, (key) => {
-        const middlewareFn = middleware[key];
+      const middlewares = map(middlewareKeys, (key) => {
+        const target: Function = middleware[key];
         const newParams = params ? params[key] : [];
-        return handlerFactory(middlewareFn, newParams);
+
+        return async (ctx: Router.IRouterContext, next: () => Promise<any>) => {
+          await target(...prepareParams(ctx, next, newParams));
+        }
       });
 
-      router.use(...listMiddleware);
+      router.use(...middlewares);
     }
 
     if (route) {
-      const {method, target, path, methodName} = route;
+      const {method, target, path, methodName} = route as MetaRoute;
       const newParams = params[methodName];
-      router[method](path, handlerFactory(target, newParams));
+
+      router[method](path, async (ctx: Router.IRouterContext, next: () => Promise<any>) => {
+        await target(...prepareParams(ctx, next, newParams));
+      });
     }
   }
 

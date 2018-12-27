@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
-import {UseDecorator} from '../src';
 import {TestController} from './test.controller';
+import {UseDecorator} from '../src/index';
 
 const testRouter = UseDecorator(TestController, true);
 

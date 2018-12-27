@@ -8,10 +8,10 @@ export enum Methods {
   All = "all",
 }
 
-function decorateRoute(method) {
+function decorateRoute(method: Methods) {
 
-  return function (path) {
-    return function (target, methodName: string, descriptor: PropertyDescriptor) {
+  return function (path: string) {
+    return function (target: any, methodName: string, descriptor: PropertyDescriptor) {
       const targetMethod = target[methodName];
       const route = getMetaRoute(targetMethod);
 
