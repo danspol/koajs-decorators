@@ -1,9 +1,4 @@
-# koajs-decorators
-
-Example
--------------
-
-```javascript
+import {Body, Context, Controller, Delete, Get, Middleware, Next, Params, Post, Put, Response} from '../src/decorators';
 
 async function check(ctx, next) {
   await next()
@@ -55,4 +50,3 @@ export class TestController extends AuthMiddleware {
     console.log("some think");
   }
 }
-```
