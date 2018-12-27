@@ -1,17 +1,38 @@
 {
   "name": "koajs-decorators",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./node_modules/typescript/bin/tsc",
+    "prepublish": "npm run build"
   },
-  "author": "",
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "koa",
+    "router",
+    "decorator",
+    "@route",
+    "@Controler",
+    "@Middleware",
+    "@Get",
+    "@Post",
+    "@All"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Dorin Turturean",
   "license": "ISC",
   "devDependencies": {
     "ts-node": "^7.0.1",
     "typescript": "^3.2.2"
   },
+  "typings": "index",
   "dependencies": {
     "@types/koa-router": "^7.0.35",
     "@types/lodash": "^4.14.119",

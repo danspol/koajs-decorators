@@ -1,5 +1,5 @@
 import {map, uniq} from 'lodash';
-import {Methods} from "./decorators/route";
+import {Methods} from "./decorators";
 
 export const nameMetaController = '__koajs_decorators_controller__';
 export const nameMetaMiddleware = '__koajs_decorators_middleware__';

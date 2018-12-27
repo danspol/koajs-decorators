@@ -11,9 +11,9 @@ export enum PropSource {
   Context = 'ctx',
 }
 
-function decorateParams(propSource: PropSource) {
+function decorateParams<T>(propSource: PropSource) {
 
-  return function (propName?: string) {
+  return function (propName: string = '') {
     return function (target: any, methodName: string, index: number) {
 
       updateMetaParams(target[methodName], methodName, index, {propSource, propName})

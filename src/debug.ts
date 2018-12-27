@@ -26,7 +26,7 @@ export const decoratorLogs = (name: string, log = false) => {
         const middlewareKeys = keys(middleware);
 
         const listMiddleware = map(middlewareKeys, (key) => {
-          const methodName = middleware[key].name;
+          const methodName = middleware[key];
           const newParams = params ? params[key] : [];
 
           return {methodName: methodName, params: debugArguments(newParams)};
@@ -37,9 +37,10 @@ export const decoratorLogs = (name: string, log = false) => {
 
       if (route) {
         const {method, path, methodName} = route;
-        const newParams = params[methodName];
+        const newParams = params ? params[methodName] : [];
 
         groupRoute = {method, path, methodName, params: debugArguments(newParams)};
+        data.push(groupRoute)
       }
 
       if (route) {
@@ -48,8 +49,6 @@ export const decoratorLogs = (name: string, log = false) => {
         });
 
         data.push(...groupMiddleware);
-        data.push(groupRoute);
-
       } else {
         data.push(...groupMiddleware)
       }

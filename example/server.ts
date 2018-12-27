@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
 import {TestController} from './test.controller';
-import {UseDecorator} from '../src/index';
+import {UseDecorator} from 'koajs-decorators/lib';
 
 const testRouter = UseDecorator(TestController, true);
 

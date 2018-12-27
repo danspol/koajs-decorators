@@ -2,25 +2,14 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "module": "commonjs",
-    "target": "esnext",
+    "target": "es2015",
     "noImplicitAny": true,
     "removeComments": true,
-    "declaration": true,
     "preserveConstEnums": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "strict": true,
-    "outDir": "lib",
-    "lib": [
-      "es6"
-    ],
-    "typeRoots": [
-      "node_modules/@types/"
-    ]
+    "outDir": "dist"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
     "node_modules"
   ]
